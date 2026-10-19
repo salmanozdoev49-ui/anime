@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090909">
+  <meta name="description" content="Мираж Anime — каталог аниме для просмотра.">
+  <title>Мираж Anime</title>
+  <style>
+    :root {
+      --bg: #080808;
+      --panel: #121212;
+      --panel-2: #191919;
+      --red: #b51224;
+      --red-bright: #ed1b35;
+      --silver: #d1d1d1;
+      --muted: #969696;
+      --border: #303030;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: radial-gradient(ellipse at top, #21090d 0, var(--bg) 430px);
+      color: #f2f2f2;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .wrap { width: min(1180px, calc(100% - 28px)); margin: 0 auto; }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(8,8,8,.94); backdrop-filter: blur(12px);
+      border-bottom: 1px solid #292929;
+    }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 0; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--silver); text-decoration: none; font-weight: 900; letter-spacing: .3px; font-size: clamp(18px, 4vw, 25px); }
+    .brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; color: white; background: linear-gradient(145deg, #e51a35, #570812); box-shadow: 0 0 24px #b512243b; }
+    .brand span:last-child { text-shadow: 0 0 18px #ffffff20; }
+    .top-actions { display: flex; gap: 8px; }
+    .icon-btn, .filter-btn {
+      border: 1px solid var(--border); background: #151515; color: var(--silver);
+      border-radius: 10px; min-height: 40px; padding: 8px 11px;
+    }
+    .hero { padding: 42px 0 24px; text-align: center; }
+    .eyebrow { color: var(--red-bright); text-transform: uppercase; letter-spacing: 3px; font-size: 11px; font-weight: 800; }
+    h1 { margin: 9px 0 8px; font-size: clamp(34px, 8vw, 64px); letter-spacing: -1.8px; line-height: 1.06; color: #e1e1e1; }
+    h1 em { color: var(--red-bright); font-style: normal; }
+    .hero p { color: var(--muted); margin: 0 auto; max-width: 520px; font-size: 14px; line-height: 1.6; }
+    .search-row { display: flex; gap: 8px; max-width: 700px; margin: 22px auto 0; }
+    .search-wrap { flex: 1; position: relative; }
+    .search-wrap span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+    #search { width: 100%; min-height: 46px; padding: 12px 14px 12px 42px; background: #141414; border: 1px solid #333; color: white; border-radius: 12px; outline: none; }
+    #search:focus, select:focus { border-color: var(--red); }
+    .primary-btn { background: linear-gradient(135deg, #d71932, #8c0d1e); border: 1px solid #f13a4f66; color: white; border-radius: 11px; padding: 10px 15px; font-weight: 750; }
+    .primary-btn:active { transform: translateY(1px); }
+    .filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0 24px; align-items: center; }
+    .filters select { min-height: 39px; max-width: 100%; background: #141414; color: var(--silver); border: 1px solid var(--border); border-radius: 10px; padding: 8px 32px 8px 10px; }
+    .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 18px 0 14px; }
+    h2 { font-size: 19px; margin: 0; color: var(--silver); }
+    #count { color: var(--muted); font-size: 12px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-bottom: 36px; }
+    .card { background: linear-gradient(180deg, #171717, #0e0e0e); border: 1px solid #2c2c2c; border-radius: 13px; overflow: hidden; min-width: 0; transition: transform .18s, border-color .18s; }
+    .card:hover { transform: translateY(-3px); border-color: #7e1a27; }
+    .poster { position: relative; aspect-ratio: 3 / 4; background: #202020; overflow: hidden; }
+    .poster img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .poster-fallback { height: 100%; display: grid; place-items: center; padding: 14px; text-align: center; color: #bcbcbc; background: radial-gradient(circle at 50% 25%, #57121d, #111 65%); font-size: 20px; font-weight: 900; }
+    .status { position: absolute; top: 8px; left: 8px; max-width: calc(100% - 16px); padding: 5px 7px; background: #080808dc; border: 1px solid #ffffff22; border-radius: 7px; font-size: 10px; color: #eee; }
+    .card-body { padding: 11px; }
+    .card h3 { margin: 0 0 6px; font-size: 14px; line-height: 1.35; color: #f1f1f1; overflow-wrap: anywhere; }
+    .meta { color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .card-actions { display: flex; gap: 7px; margin-top: 11px; }
+    .card-actions button { flex: 1; min-width: 0; padding: 8px 5px; border-radius: 8px; font-size: 12px; }
+    .watch-btn { border: 1px solid #bd1c31; background: #a80f23; color: white; }
+    .fav-btn { border: 1px solid #383838; background: #202020; color: #ddd; max-width: 42px; }
+    .empty { padding: 35px 14px; text-align: center; border: 1px dashed #393939; border-radius: 13px; color: var(--muted); grid-column: 1 / -1; }
+    footer { border-top: 1px solid #252525; padding: 20px 0 30px; color: #777; text-align: center; font-size: 12px; }
+    .modal { position: fixed; inset: 0; z-index: 30; display: none; align-items: flex-end; justify-content: center; background: #000c; padding: 12px; }
+    .modal.open { display: flex; }
+    .modal-panel { width: min(760px, 100%); max-height: 92vh; overflow: auto; background: #111; border: 1px solid #3a3a3a; border-radius: 17px; box-shadow: 0 20px 80px #000; }
+    .modal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; border-bottom: 1px solid #2b2b2b; }
+    .modal-head h2 { font-size: 18px; }
+    .close-btn { background: #252525; color: white; border: 1px solid #444; border-radius: 8px; padding: 7px 11px; }
+    .detail { padding: 16px; display: grid; grid-template-columns: 105px 1fr; gap: 14px; }
+    .detail img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 9px; background: #222; }
+    .detail p { color: #bbb; line-height: 1.6; font-size: 13px; margin: 8px 0; white-space: pre-wrap; }
+    .episode-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding: 0 16px 16px; }
+    .episode-btn { background: #202020; border: 1px solid #3b3b3b; color: #eee; border-radius: 9px; padding: 10px 4px; font-size: 12px; }
+    .episode-btn:hover { border-color: var(--red); }
+    .note { margin: 0 16px 16px; color: #858585; font-size: 11px; line-height: 1.5; }
+    @media (min-width: 560px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; } .hero { padding-top: 55px; } .modal { align-items: center; } }
+    @media (min-width: 850px) { .grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } .hero p { font-size: 15px; } .card h3 { font-size: 15px; } }
+    @media (max-width: 380px) { .wrap { width: calc(100% - 20px); } .topbar { gap: 8px; } .brand { font-size: 17px; } .brand-mark { width: 34px; height: 34px; } .primary-btn { padding: 9px 10px; font-size: 12px; } .filters select { flex: 1; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <a class="brand" href="#" aria-label="Мираж Anime — главная">
+        <span class="brand-mark">✦</span><span>Мираж <span style="color:#ed1b35">Anime</span></span>
+      </a>
+      <div class="top-actions">
+        <button class="icon-btn" id="favoritesToggle" type="button" aria-label="Показать избранное">♡ <span class="fav-count">0</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="eyebrow">ТВОЯ АНИМЕ-КОЛЛЕКЦИЯ</div>
+      <h1>Мираж <em>Anime</em></h1>
+      <p>Найди свою следующую историю. Выбирай аниме, открывай список серий и переходи к доступному плееру.</p>
+      <div class="search-row">
+        <div class="search-wrap"><span>⌕</span><input id="search" type="search" placeholder="Найти аниме..." autocomplete="off"></div>
+        <button class="primary-btn" id="clearSearch" type="button">Сбросить</button>
+      </div>
+    </section>
+
+    <div class="filters" aria-label="Фильтры каталога">
+      <select id="genreFilter" aria-label="Жанр">
+        <option value="">Все жанры</option>
+        <option>Экшен</option><option>Приключения</option><option>Фэнтези</option><option>Драма</option><option>Комедия</option><option>Детектив</option><option>Романтика</option><option>Ужасы</option><option>Фантастика</option>
+      </select>
+      <select id="yearFilter" aria-label="Год"><option value="">Все годы</option></select>
+      <select id="statusFilter" aria-label="Статус">
+        <option value="">Все статусы</option><option>Онгоинг</option><option>Вышло полностью</option><option>Анонс</option>
+      </select>
+    </div>
+
+    <div class="section-head">
+      <h2 id="sectionTitle">Каталог аниме</h2><span id="count">Загрузка…</span>
+    </div>
+    <section id="animeGrid" class="grid" aria-live="polite"></section>
+  </main>
+
+  <footer><div class="wrap">Мираж Anime <span style="color:#b51224">◆</span> Каталог и ссылки на внешние видеосервисы</div></footer>
+
+  <div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div class="modal-panel">
+      <div class="modal-head"><h2 id="detailTitle">Аниме</h2><button class="close-btn" id="closeModal" type="button">Закрыть ✕</button></div>
+      <div class="detail">
+        <img id="detailPoster" alt="Постер аниме">
+        <div><div id="detailMeta" class="meta"></div><p id="detailDescription"></p><div id="detailGenres" class="meta"></div></div>
+      </div>
+      <div class="section-head" style="padding:0 16px;margin-top:0"><h2>Выбор серии</h2></div>
+      <div class="episode-list" id="episodeList"></div>
+      <p class="note">Серии открываются по ссылкам, которые ты укажешь в файле anime.json. Внешний сервис может ограничивать встраивание или доступность видео.</p>
+    </div>
+  </div>
+
+  <script>
+    // Примерные карточки для первого запуска. Позже замени их данными из anime.json.
+    const starterAnime = [
+      {id:1,title:"Клеймор",year:2007,genres:["Экшен","Фэнтези","Драма"],status:"Вышло полностью",poster:"",description:"Тёмное фэнтези о воительницах, сражающихся с ёма.",episodes:[{number:1,playerUrl:""}]},
+      {id:2,title:"Стальной алхимик: Братство",year:2009,genres:["Экшен","Приключения","Фэнтези"],status:"Вышло полностью",poster:"",description:"История двух братьев, отправившихся на поиски философского камня.",episodes:[{number:1,playerUrl:""}]},
+      {id:3,title:"Атака титанов",year:2013,genres:["Экшен","Драма","Фэнтези"],status:"Вышло полностью",poster:"",description:"Люди пытаются выжить за стенами, защищающими их от титанов.",episodes:[{number:1,playerUrl:""}]},
+      {id:4,title:"Ван-Пис",year:1999,genres:["Экшен","Приключения","Комедия"],status:"Онгоинг",poster:"",description:"Путешествие Луффи и его команды в поисках легендарного сокровища.",episodes:[{number:1,playerUrl:""}]},
+      {id:5,title:"Монстр",year:2004,genres:["Детектив","Драма","Ужасы"],status:"Вышло полностью",poster:"",description:"Нейрохирург оказывается втянут в сложную историю, связанную с человеком, которого он спас.",episodes:[{number:1,playerUrl:""}]},
+      {id:6,title:"Мушоку Тенсей: Реинкарнация безработного",year:2021,genres:["Приключения","Фэнтези","Драма"],status:"Онгоинг",poster:"",description:"Фэнтезийная история о втором шансе и непростом взрослении.",episodes:[{number:1,playerUrl:""}]}
+    ];
+
+    let animeList = starterAnime;
+    let showFavorites = false;
+    let favorites = new Set();
+    try { favorites = new Set(JSON.parse(localStorage.getItem("mirageAnimeFavorites") || "[]")); } catch (_) {}
+
+    const $ = (id) => document.getElementById(id);
+    const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    const normalize = (value) => String(value ?? "").toLocaleLowerCase("ru").trim();
+
+    function buildYears() {
+      const years = [...new Set(animeList.map(a => Number(a.year)).filter(y => y > 1900))].sort((a,b) => b-a);
+      $("yearFilter").innerHTML = '<option value="">Все годы</option>' + years.map(y => `<option value="${y}">${y}</option>`).join("");
+    }
+    function getPosterMarkup(anime, extraClass="") {
+      if (anime.poster) return `<img class="${extraClass}" src="${escapeHtml(anime.poster)}" alt="Постер: ${escapeHtml(anime.title)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="poster-fallback" style="display:none">${escapeHtml(anime.title)}</div>`;
+      return `<div class="poster-fallback">${escapeHtml(anime.title)}</div>`;
+    }
+    function render() {
+      const query = normalize($("search").value);
+      const genre = $("genreFilter").value;
+      const year = $("yearFilter").value;
+      const status = $("statusFilter").value;
+      const filtered = animeList.filter(a => {
+        const matchesQuery = !query || normalize([a.title, ...(a.genres || []), a.description].join(" ")).includes(query);
+        const matchesGenre = !genre || (a.genres || []).includes(genre);
+        const matchesYear = !year || String(a.year) === year;
+        const matchesStatus = !status || a.status === status;
+        const matchesFav = !showFavorites || favorites.has(String(a.id));
+        return matchesQuery && matchesGenre && matchesYear && matchesStatus && matchesFav;
+      });
+      $("sectionTitle").textContent = showFavorites ? "Избранное" : "Каталог аниме";
+      $("count").textContent = `Найдено: ${filtered.length}`;
+      $("animeGrid").innerHTML = filtered.length ? filtered.map(a => `
+        <article class="card">
+          <div class="poster">
+            ${getPosterMarkup(a)}
+            <span class="status">${escapeHtml(a.status || "Не указан")}</span>
+          </div>
+          <div class="card-body">
+            <h3>${escapeHtml(a.title)}</h3>
+            <div class="meta">${escapeHtml(a.year || "Год неизвестен")} · ${escapeHtml((a.genres || []).slice(0,2).join(", "))}</div>
+            <div class="card-actions">
+              <button class="watch-btn" type="button" data-open="${escapeHtml(a.id)}">Подробнее</button>
+              <button class="fav-btn" type="button" data-fav="${escapeHtml(a.id)}" aria-label="Добавить в избранное">${favorites.has(String(a.id)) ? "♥" : "♡"}</button>
+            </div>
+          </div>
+        </article>`).join("") : '<div class="empty">Ничего не найдено. Попробуй изменить поиск или фильтры.</div>';
+      $("favoritesToggle").innerHTML = `♡ <span class="fav-count">${favorites.size}</span>`;
+    }
+    function openDetails(id) {
+      const a = animeList.find(item => String(item.id) === String(id));
+      if (!a) return;
+      $("detailTitle").textContent = a.title;
+      $("detailPoster").src = a.poster || "";
+      $("detailPoster").alt = `Постер: ${a.title}`;
+      $("detailMeta").textContent = `${a.year || "Год неизвестен"} · ${a.status || "Статус не указан"}`;
+      $("detailDescription").textContent = a.description || "Описание пока не добавлено.";
+      $("detailGenres").textContent = `Жанры: ${(a.genres || []).join(", ") || "не указаны"}`;
+      const episodes = Array.isArray(a.episodes) ? a.episodes : [];
+      $("episodeList").innerHTML = episodes.length ? episodes.map((ep, i) => {
+        const num = ep.number ?? i + 1;
+        const url = String(ep.playerUrl || "");
+        return `<button class="episode-btn" type="button" data-episode-url="${escapeHtml(url)}">Серия ${escapeHtml(num)}</button>`;
+      }).join("") : '<div class="empty">Серии пока не добавлены.</div>';
+      $("detailModal").classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+    function closeDetails() { $("detailModal").classList.remove("open"); document.body.style.overflow = ""; }
+    $("animeGrid").addEventListener("click", e => {
+      const open = e.target.closest("[data-open]");
+      const fav = e.target.closest("[data-fav]");
+      if (open) openDetails(open.dataset.open);
+      if (fav) {
+        const id = String(fav.dataset.fav);
+        if (favorites.has(id)) favorites.delete(id); else favorites.add(id);
+        try { localStorage.setItem("mirageAnimeFavorites", JSON.stringify([...favorites])); } catch (_) {}
+        render();
+      }
+    });
+    $("episodeList").addEventListener("click", e => {
+      const btn = e.target.closest("[data-episode-url]");
+      if (!btn) return;
+      const url = btn.dataset.episodeUrl.trim();
+      if (!url) { alert("Для этой серии пока не добавлена ссылка. Добавь playerUrl в файле anime.json."); return; }
+      try {
+        const parsed = new URL(url);
+        if (parsed.protocol !== "https:" && parsed.protocol !== "http:") throw new Error();
+        window.open(parsed.href, "_blank", "noopener,noreferrer");
+      } catch (_) { alert("Ссылка выглядит некорректно. Проверь playerUrl в anime.json."); }
+    });
+    $("favoritesToggle").addEventListener("click", () => { showFavorites = !showFavorites; render(); window.scrollTo({top:0,behavior:"smooth"}); });
+    $("search").addEventListener("input", render);
+    ["genreFilter","yearFilter","statusFilter"].forEach(id => $(id).addEventListener("change", render));
+    $("clearSearch").addEventListener("click", () => { $("search").value=""; $("genreFilter").value=""; $("yearFilter").value=""; $("statusFilter").value=""; showFavorites=false; render(); });
+    $("closeModal").addEventListener("click", closeDetails);
+    $("detailModal").addEventListener("click", e => { if (e.target === $("detailModal")) closeDetails(); });
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetails(); });
+
+    async function loadCatalog() {
+      try {
+        const response = await fetch("./anime.json", {cache:"no-store"});
+        if (!response.ok) throw new Error("anime.json отсутствует");
+        const data = await response.json();
+        if (Array.isArray(data)) animeList = data;
+      } catch (_) {
+        // При первом запуске используется встроенный демонстрационный каталог.
+      }
+      buildYears();
+      render();
+    }
+    loadCatalog();
+  </script>
+</body>
+</html>
